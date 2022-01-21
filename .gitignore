@@ -1,0 +1,6 @@
+.replit
+**/pycache/
+account.session
+account.session-journal
+download/
+test.py

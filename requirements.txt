@@ -1,0 +1,8 @@
+pyrogram
+tgcrypto
+pySmartDL
+requests
+speedtest-cli
+ffmpeg-python
+wget
+patool
