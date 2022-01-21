@@ -2,7 +2,7 @@
     "name": "upload_Z",
     "description": "A Pyrogram Telegram bot to upload files",
     "keywords": ["telegram", "media"],
-    "repository": "https://github.com/artemiszuk/upload_Z",
+    "repository": "https://github.com/artemiszuk/SimpleUBot",
     "success_url": "/",
     "logo": "https://telegra.ph/file/9d63060a06c6fc6def1da.png",
     "website": "stream.wrench.gq",

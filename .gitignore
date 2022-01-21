@@ -1,6 +1,10 @@
 .replit
-**/pycache/
+__pycache__/
+plugins/SUploadBot.session
 account.session
 account.session-journal
 download/
+bot/downloads
 test.py
+log.txt
+bot/SUploadBot.session

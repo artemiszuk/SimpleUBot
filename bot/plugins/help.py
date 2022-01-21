@@ -1,9 +1,15 @@
 from pyrogram import Client, filters
-from bot.config import CustomFilters, Messages
-from pyrogram.types import InlineKeyboardMarkup, InlineKeyboardButton
+from bot.config import CustomFilters, Messages, Var
+from pyrogram.types import (
+    ReplyKeyboardMarkup,
+    InlineKeyboardMarkup,
+    InlineKeyboardButton,
+    CallbackQuery,
+)
 
-@app.on_message(filters.command(["start"]) & CustomFilters.auth_users)
+@Client.on_message(filters.command(["start"]) & CustomFilters.auth_users)
 async def start(client, message):
+    await client.send_message(message.chat.id,"Working")
     await message.reply(
         Messages.START_MSG,
         reply_markup=InlineKeyboardMarkup(
@@ -23,11 +29,11 @@ async def start(client, message):
     )  # sends above messsage
 
 
-@app.on_message(filters.command(["help"]))
+@Client.on_message(filters.command(["help"]))
 async def help(client, message):
     await start(client, message)
 
-@app.on_callback_query()
+@Client.on_callback_query()
 async def button(client, cmd: CallbackQuery):
     cb_data = cmd.data
     if "help" in cb_data:
@@ -65,10 +71,7 @@ async def button(client, cmd: CallbackQuery):
     elif "toggle" in cb_data:
         user_id = cmd.from_user.id
         print(user_id)
-        if Var.upload_as_doc[user_id]:
-            Var.upload_as_doc[user_id] = False
-        else:
-            Var.upload_as_doc[user_id] = True
+        Var.upload_as_doc[user_id] = not Var.upload_as_doc[user_id]
         text = "**⚙TOGGLE MENU:**\n[__Click to change__]\n\nVideo File Will be Uploaded as "
         if Var.upload_as_doc[user_id]:
             text_append = "Document 📁"

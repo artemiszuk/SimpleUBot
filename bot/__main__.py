@@ -29,6 +29,7 @@ if __name__ == "__main__":
         api_hash=API_HASH,
         plugins=plugins
     )
+    print(os.getcwd())
     LOGGER.info('Starting Bot !')
     app.run()
     LOGGER.info('Bot Stopped !')

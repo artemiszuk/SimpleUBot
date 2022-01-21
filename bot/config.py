@@ -1,4 +1,5 @@
 from bot import AUTH_USERS
+from pyrogram import filters
 
 class CustomFilters:
     auth_users = filters.create(

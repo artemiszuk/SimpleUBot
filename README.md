@@ -3,13 +3,14 @@
 This is Simple Upload bot written from scratch by me (may contain bugs as I am Still Learning Python)
 
 ### Features :
-• uses pySmartDL to download files \
+• Uses pySmartDL to download files \
 • Perform SpeedTest using speedtest-cli module \
 • Custom Thumbnail \
 • Download Progress / Upload Progress & ETA  \
 • Toggle for uploading videos as document/video \
 • Download File from Direct Link and upload as Document \
 • Unzip / Unrar and upload
+• Cancel Download/Upload
 • more soon... 
 
 ### Deploy to Test
