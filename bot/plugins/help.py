@@ -9,7 +9,6 @@ from pyrogram.types import (
 
 @Client.on_message(filters.command(["start"]) & CustomFilters.auth_users)
 async def start(client, message):
-    await client.send_message(message.chat.id,"Working")
     await message.reply(
         Messages.START_MSG,
         reply_markup=InlineKeyboardMarkup(
