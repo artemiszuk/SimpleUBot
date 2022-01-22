@@ -1,6 +1,5 @@
 .replit
 __pycache__/
-plugins/SUploadBot.session
 account.session
 account.session-journal
 download/

@@ -7,27 +7,27 @@ from bot.helpers.utils import extension,get_details
 from bot.helpers.progress import progress_for_pyrogram, humanbytes
 import time
 
-async def upload_folder(client,path, bot_msg, user_id):
+async def upload_folder(client,path, bot_msg, user_id,first_msg):
     if os.path.isdir(path) and len(os.listdir(path)) > 0:
         allfiles = os.listdir(path)
         allfiles.sort()
         await asyncio.sleep(3)
-        info = await bot_msg.reply(
+        info = await first_msg.reply(
             f"Currently in Folder : __{os.path.basename(path)}__\nTotal Files : {len(allfiles)}",
         )
         await asyncio.sleep(3)
         # print("Total files",len(allfiles),"allfiles = ",allfiles)
         for flist in allfiles:
             npath = os.path.join(path, flist)
-            await upload_folder(client,npath, bot_msg, user_id)
+            await upload_folder(client,npath, bot_msg, user_id,info)
     else:
         await asyncio.sleep(3)
         bot_msg = await bot_msg.reply("Trying to Upload...")
         await asyncio.sleep(3)
-        await upload(client,bot_msg, path, user_id)
+        await upload(client,bot_msg, path, user_id,first_msg)
 
 
-async def upload(client, message, filepath, user_id):
+async def upload(client, message, filepath, user_id, reply_to):
     c_time = time.time()
     if user_id not in Var.upload_as_doc:
         Var.upload_as_doc[user_id] = True
@@ -38,8 +38,7 @@ async def upload(client, message, filepath, user_id):
         if Var.upload_as_doc[user_id] == False and (exten == ".mp4" or exten == ".mkv"):
             mydict = await get_details(filepath)
             print("Uploading as Video")
-            media_msg = await client.send_video(
-                message.chat.id,
+            media_msg = await reply_to.reply_video(
                 filepath,
                 supports_streaming=True,
                 caption=filename,
@@ -52,8 +51,7 @@ async def upload(client, message, filepath, user_id):
             )
         else:
             print("Uploading as Document")
-            media_msg = await client.send_document(
-                message.chat.id,
+            media_msg = await reply_to.reply_document(
                 filepath,
                 caption=filename,
                 thumb=str(Var.tdict[user_id]),
@@ -64,8 +62,7 @@ async def upload(client, message, filepath, user_id):
         if Var.upload_as_doc[user_id] == False and (exten == ".mp4" or exten == ".mkv"):
             print("Uploading as Video")
             mydict = await get_details(filepath)
-            media_msg = await client.send_video(
-                message.chat.id,
+            media_msg = await reply_to.reply_video(
                 filepath,
                 supports_streaming=True,
                 caption=filename,
@@ -81,8 +78,7 @@ async def upload(client, message, filepath, user_id):
             print("Uploading as Documetn")
             print(Var.upload_as_doc[user_id])
             mydict = await get_details(filepath)
-            media_msg = await client.send_document(
-                message.chat.id,
+            media_msg = await reply_to.reply_document(
                 filepath,
                 caption=filename,
                 thumb=mydict["tname"],
@@ -92,8 +88,7 @@ async def upload(client, message, filepath, user_id):
             os.remove(mydict["tname"])
         else:
             print("Uploading as Docuemnt")
-            media_msg = await client.send_document(
-                message.chat.id,
+            media_msg = await reply_to.reply_document(
                 filepath,
                 caption=filename,
                 progress=progress_for_pyrogram,

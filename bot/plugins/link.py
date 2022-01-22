@@ -17,10 +17,6 @@ async def link(client, message, unzipflag=False):
     user_id = message.from_user.id
     if user_id not in Var.q_link:
         Var.q_link[user_id] = []
-    if user_id not in Var.return_msg:
-        Var.return_msg[
-            user_id
-        ] = f"**🎴 UPLOADED MENU:** \n__Sender__: @{message.from_user.username}\n\n"
     Var.q_link[user_id].append(messageobj(message))
     Var.q_link[user_id][-1].unzip = unzipflag
     if os.path.isdir(f"download/{user_id}") and len(Var.q_link[user_id]) > 1:
@@ -31,6 +27,8 @@ async def link(client, message, unzipflag=False):
         await queue_msg.delete()
         return
     while len(Var.q_link[user_id][:]) > 0:
+        if user_id not in Var.return_msg:
+          Var.return_msg[user_id] = f"**🎴 UPLOADED MENU:** \n__Sender__ : @{message.from_user.username}\n\n"
         obj = Var.q_link[user_id][0]
         print("Download task is started ,size of Queue= ", len(Var.q_link[user_id]))
         try:
@@ -41,10 +39,10 @@ async def link(client, message, unzipflag=False):
           return
         if len(filepath) != 0:
             if obj.unzip:
-                await unzip_and_upload(client,bot_msg, filepath, user_id)
+                await unzip_and_upload(client,bot_msg, filepath, user_id,message)
                 if(message.from_user.id != message.chat.id): await message.reply(Var.return_msg[user_id])
             else:
-                await upload(client,bot_msg, filepath, obj.message.from_user.id)
+                await upload(client,bot_msg, filepath, obj.message.from_user.id,message)
                 if(message.from_user.id != message.chat.id): await message.reply(Var.return_msg[user_id])
             shutil.rmtree(f"download/{obj.message.from_user.id}/")
         Var.return_msg.pop(user_id)

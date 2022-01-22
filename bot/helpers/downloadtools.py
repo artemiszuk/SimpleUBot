@@ -17,7 +17,7 @@ from bot.helpers.utils import extension
 from bot.helpers.progress import humanbytes
 from bot.helpers.uploadtools import upload_folder
 
-async def unzip_and_upload(client,bot_msg, filepath, user_id):
+async def unzip_and_upload(client,bot_msg, filepath, user_id,reply_to):
     new_dir = filepath[0 : filepath.index(extension(filepath))] + "/"
     os.makedirs(new_dir)
     try:
@@ -27,7 +27,7 @@ async def unzip_and_upload(client,bot_msg, filepath, user_id):
         await bot_msg.edit_text(e_text)
         return
     else:
-        await upload_folder(client,new_dir, bot_msg, user_id)
+        await upload_folder(client,new_dir, bot_msg, user_id,reply_to)
 
 async def dl_link(client, message):
     user_id = message.from_user.id
