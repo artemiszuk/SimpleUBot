@@ -2,16 +2,17 @@ import os
 import speedtest
 import wget
 from pyrogram import Client, filters
+from bot.config import CustomFilters
 
-@Client.on_message(filters.command(["speedtest"]))
+@Client.on_message(filters.command(["speedtest"]) & CustomFilters.auth_users)
 async def speedtst(client, message):
-    message = await message.reply(f"Performing Speedtest ...")
+    bot_msg = await message.reply(f"__Performing Speedtest__ ...")
     try:
         test = speedtest.Speedtest()
         test.get_best_server()
-        await message.edit("`Performing download test . . .`")
+        await bot_msg.edit("__Performing download test ...__")
         test.download()
-        await message.edit("`Performing upload test . . .`")
+        await bot_msg.edit("__Performing upload test ...__")
         test.upload()
         test.results.share()
         result = test.results.dict()
@@ -19,5 +20,5 @@ async def speedtst(client, message):
         await message.edit_text(f"{str(e)}")
     path = wget.download((result["share"]))
     await message.reply_photo(photo=path)
-    await message.delete()
+    await bot_msg.delete()
     os.remove(path)

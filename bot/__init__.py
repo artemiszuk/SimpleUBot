@@ -15,6 +15,7 @@ try:
   API_ID = int(os.environ.get('API_ID'))
   API_HASH = os.environ.get('API_HASH')
   AUTH_USERS = os.environ.get("AUTH_USERS").split()
+  OWNER_ID = os.environ.get("OWNER_ID").split()
 except KeyError:
   LOGGER.error('One or more configuration values are missing exiting now.')
   exit(1)

@@ -1,11 +1,13 @@
-from bot import AUTH_USERS
+from bot import AUTH_USERS,OWNER_ID
 from pyrogram import filters
 
 class CustomFilters:
     auth_users = filters.create(
         lambda _, __, message: str(message.from_user.id) in AUTH_USERS
-        or str(message.chat.id) in auth_users
+        or str(message.chat.id) in AUTH_USERS
     )
+    owner = filters.create(
+        lambda _, __, message: str(message.from_user.id) in OWNER_ID)
 
 class Messages:
   START_MSG = "**📌MAIN MENU**\n\nHi ! This is Simple File Upload Bot \n\n__Check Below for commands/features__"

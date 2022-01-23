@@ -35,7 +35,7 @@ async def upload(client, message, filepath, user_id, reply_to):
     exten = extension(filepath)
     await message.edit(f"__Uploading {filename}__ ... 📤")
     if user_id in Var.tdict:
-        if Var.upload_as_doc[user_id] == False and (exten == ".mp4" or exten == ".mkv"):
+        if Var.upload_as_doc[user_id] == False and exten in (".mp4",".mkv",".webm"):
             mydict = await get_details(filepath)
             print("Uploading as Video")
             media_msg = await reply_to.reply_video(
@@ -59,7 +59,7 @@ async def upload(client, message, filepath, user_id, reply_to):
                 progress_args=("Upload Status: \n", message, c_time, user_id, client),
             )
     else:
-        if Var.upload_as_doc[user_id] == False and (exten == ".mp4" or exten == ".mkv"):
+        if Var.upload_as_doc[user_id] == False and exten in (".mp4",".mkv",".webm"):
             print("Uploading as Video")
             mydict = await get_details(filepath)
             media_msg = await reply_to.reply_video(
@@ -99,5 +99,6 @@ async def upload(client, message, filepath, user_id, reply_to):
     chatid_string = str(message.chat.id)
     mediaid_string = str(media_msg.message_id)
     link = f"https://t.me/c/{chatid_string[4:]}/{mediaid_string}"
-    Var.return_msg[user_id] += f"⚈ [{filename}]({link})" + "\n\n"
+    if user_id in Var.return_msg: 
+      Var.return_msg[user_id] += f"⚈ [{filename}]({link})" + "\n\n"
     await message.delete()

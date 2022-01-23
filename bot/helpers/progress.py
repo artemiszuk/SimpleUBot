@@ -13,7 +13,7 @@ from pyrogram.types import (
 
 
 async def progress_for_pyrogram(current, total, ud_type, message, start, user_id, app):
-    if Var.cancel[user_id]:
+    if user_id in Var.cancel and Var.cancel[user_id]:
         await message.edit("Upload Cancelled ‼")
         app.stop_transmission()
         shutil.rmtree(f"download/{user_id}/")
