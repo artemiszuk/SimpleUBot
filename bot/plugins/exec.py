@@ -8,15 +8,14 @@ async def exec_cmd(client, message):
   if len(msglist) == 1:
     await message.reply("No Command Found")
     return
-  
-  command_to_exec = list(msglist[1:])
-  print(command_to_exec)
-  proc = await asyncio.create_subprocess_exec(
-        *command_to_exec,
-        stdout=asyncio.subprocess.PIPE,
-        stderr=asyncio.subprocess.PIPE
-    )
   try:
+    command_to_exec = list(msglist[1:])
+    print(command_to_exec)
+    proc = await asyncio.create_subprocess_exec(
+          *command_to_exec,
+          stdout=asyncio.subprocess.PIPE,
+          stderr=asyncio.subprocess.PIPE
+      )
     await proc.wait()
     text = await proc.stdout.read()
     text = text.decode('utf-8')

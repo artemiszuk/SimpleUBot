@@ -6,6 +6,7 @@ from pyrogram.types import (
     InlineKeyboardButton,
     CallbackQuery,
 )
+import urllib.request
 from patoolib import extract_archive
 from pyrogram import Client, filters, errors
 from bot.helpers.utils import progress
@@ -29,16 +30,30 @@ async def unzip_and_upload(client,bot_msg, filepath, user_id,reply_to):
     else:
         await upload_folder(client,new_dir, bot_msg, user_id,reply_to)
 
+async def geturl(url):
+  newurl=""
+  try:
+    req = urllib.request.Request(url=url, headers={'User-Agent':' Mozilla/5.0 (Windows NT 6.1; WOW64; rv:12.0) Gecko/20100101 Firefox/12.0'})
+    handler = urllib.request.urlopen(req)
+    new_url = handler.geturl()
+  except Exception as e:
+    print(e)
+    return False
+  else:
+    return new_url
+
 async def dl_link(client, message):
     user_id = message.from_user.id
     # if user_id not exists then store cancel flag
     if user_id not in Var.cancel or Var.cancel[user_id]:
         Var.cancel[user_id] = False
-    url = message.text.split()[-1]  # seperate link from message
+      # seperate link from message
     text = f"Checking url..."
     bot_msg = await message.reply(
         text, disable_web_page_preview=True
     )  # displays user input
+    url = await geturl(message.text.split()[-1])
+    print(url)
     path = f"download/{user_id}/{message.message_id}"
     if os.path.isdir(f"download/{user_id}") == False:
         try:

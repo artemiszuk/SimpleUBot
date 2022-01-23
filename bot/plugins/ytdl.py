@@ -1,7 +1,14 @@
 import os
 import shutil
 import time
+import ffmpeg
 from pyrogram import Client, filters
+from pyrogram.types import (
+    ReplyKeyboardMarkup,
+    InlineKeyboardMarkup,
+    InlineKeyboardButton,
+    CallbackQuery,
+)
 import asyncio
 from bot.helpers.progress import humanbytes, progress_for_pyrogram
 from bot.helpers.uploadtools import upload
@@ -40,15 +47,27 @@ async def ytdl(client, message):
         stdout=asyncio.subprocess.PIPE,
         stderr=asyncio.subprocess.PIPE
     )
+    user_id = message.from_user.id
+    if user_id not in Var.cancel or Var.cancel[user_id]: Var.cancel[user_id]= False
+
     try:
       while proc.returncode is None:
+        #on cancel CAllback
+        if Var.cancel[user_id]:
+          proc.terminate()
+          Var.cancel[user_id] = False
+          await bot_msg.edit("Download Cancelled")
+          shutil.rmtree(ytdl_path)
+          return
+        
         prg = ""
+        filename=""
+        file_size=""
         try:
           print("In ytdl process")
           filelist = os.listdir(ytdl_path)
           filename = os.path.basename(f"{ytdl_path}/{filelist[-1]}")
           file_size = os.path.getsize(f"{ytdl_path}/{filelist[-1]}")
-          prg = f"**Filename 📝** : __{filename}__\n" +f"\n**Downloaded 📊** :{humanbytes(file_size)}"
           #line = await proc.stdout.reade
         except IndexError:
           pass
@@ -62,9 +81,14 @@ async def ytdl(client, message):
         if "at" in textlist: 
           speed = textlist[textlist.index("at")+1]
         else: speed = 0
-        prg += f" of {total_size}\n**Speed 🚀 ** : {speed}"
+        prg = f"**Filename 📝** : __{filename}__\n" +f"\n**Downloaded 📊** :{humanbytes(file_size)} of {total_size}\n**Speed 🚀 ** : {speed}"
         print(prg)
-        await bot_msg.edit(prg)
+        await bot_msg.edit(
+                    prg,
+                    reply_markup=InlineKeyboardMarkup(
+                        [[InlineKeyboardButton("Cancel ❌", callback_data="cancel")]]
+                    ),
+                )
         await asyncio.sleep(5)
     except Exception as e:
       await bot_msg.edit(str(e))
@@ -73,8 +97,10 @@ async def ytdl(client, message):
       filelist = os.listdir(ytdl_path)
       filepath = f"{ytdl_path}/{filelist[-1]}"
       if format in ("mp3","m4a"):
+        probe = ffmpeg.probe(filepath)      
         await message.reply_audio(
                 filepath,
+                duration = round(float(probe["format"]["duration"])),
                 caption=filelist[-1],
                 progress=progress_for_pyrogram,
                 progress_args=("Upload Status: \n", message, c_time, message.from_user.id, client),
