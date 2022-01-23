@@ -9,6 +9,8 @@ from pyrogram.types import (
     InlineKeyboardButton,
     CallbackQuery,
 )
+import subprocess
+from bot.helpers.utils import get_details
 import asyncio
 from bot.helpers.progress import humanbytes, progress_for_pyrogram
 from bot.helpers.uploadtools import upload
@@ -35,12 +37,13 @@ async def ytdl(client, message):
       youtube_dl_format = f"bestvideo[height<={format}]+bestaudio/best[height<={format}]"
     youtube_dl_url = msglist[-1]
     command_to_exec = [
-        "youtube-dl",
+        "yt-dlp",
         "-f",
         youtube_dl_format,
         youtube_dl_url,
         "-o",
-        f"{ytdl_path}/%(title)s.%(ext)s"
+        f"{ytdl_path}/%(title)s.%(ext)s",
+        "--write-thumbnail"
     ]
     proc = await asyncio.create_subprocess_exec(
         *command_to_exec,
@@ -71,7 +74,7 @@ async def ytdl(client, message):
           #line = await proc.stdout.reade
         except IndexError:
           pass
-        line = await proc.stdout.readexactly(100)
+        line = await proc.stdout.readexactly(200)
         line = line.decode('utf-8')
         print(line)
         textlist = line.split()
@@ -81,7 +84,12 @@ async def ytdl(client, message):
         if "at" in textlist: 
           speed = textlist[textlist.index("at")+1]
         else: speed = 0
-        prg = f"**Filename 📝** : __{filename}__\n" +f"\n**Downloaded 📊** :{humanbytes(file_size)} of {total_size}\n**Speed 🚀 ** : {speed}"
+        #Wait message until download starts
+        if len(filename) == 0:
+          prg = "__Downloading Youtube Video 📺...__"
+        else:
+          prg = f"**Filename 📝** : __{filename}__\n" +f"\n**Downloaded 📊** :{humanbytes(file_size)} of {total_size}\n**Speed 🚀 ** : {speed}"
+        
         print(prg)
         await bot_msg.edit(
                     prg,
@@ -93,24 +101,42 @@ async def ytdl(client, message):
     except Exception as e:
       await bot_msg.edit(str(e))
     else:
-      await bot_msg.edit("Trying To Upload...")
       filelist = os.listdir(ytdl_path)
+      print(filelist)
       filepath = f"{ytdl_path}/{filelist[-1]}"
+      thumbpath = f"{ytdl_path}/{filelist[0]}"
+      await bot_msg.edit(f"__Uploading {filelist[-1]}📤__...")
+
+      #cmd = f"ffmpeg -i '{thumbpath}' '{ytdl_path}/thumb.jpg'"
+      p = subprocess.Popen(["ffmpeg", "-i",thumbpath,f"{ytdl_path}/thumb.jpg"])
+      p.wait()
+      #os.system(cmd)
+      print(thumbpath)
       if format in ("mp3","m4a"):
         probe = ffmpeg.probe(filepath)      
         await message.reply_audio(
                 filepath,
+                thumb=f"{ytdl_path}/thumb.jpg",
                 duration = round(float(probe["format"]["duration"])),
                 caption=filelist[-1],
                 progress=progress_for_pyrogram,
-                progress_args=("Upload Status: \n", message, c_time, message.from_user.id, client),
+                progress_args=("Upload Status: \n", bot_msg, c_time, message.from_user.id, client),
             )
       else:
-        user_id = message.from_user.id
-        if user_id not in Var.upload_as_doc or Var.upload_as_doc[user_id]:
-          Var.upload_as_doc[user_id] = False
-        await upload(client, bot_msg, filepath, user_id, message)
-        Var.upload_as_doc[user_id] = True
-        shutil.rmtree(ytdl_path)
+        mydict = await get_details(filepath)
+        await message.reply_video(
+                filepath,
+                supports_streaming=True,
+                caption=filelist[-1],
+                thumb=f"{ytdl_path}/thumb.jpg",
+                duration=int(float(mydict["duration"])),
+                width=int(mydict["width"]),
+                height=int(mydict["height"]),
+                progress=progress_for_pyrogram,
+                progress_args=("Upload Status: \n", bot_msg, c_time, user_id, client),
+            )
+        os.remove(mydict["tname"])
+      await bot_msg.delete()
+      shutil.rmtree(ytdl_path)
 
       

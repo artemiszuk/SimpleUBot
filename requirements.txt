@@ -6,4 +6,4 @@ speedtest-cli
 ffmpeg-python
 wget
 patool
-youtube-dl
+yt-dlp
