@@ -15,13 +15,12 @@ async def start(client, message):
             [
                 [
                     InlineKeyboardButton("Help ❓", callback_data="help"),
-                    InlineKeyboardButton("Developer 🧑‍💻", url="https://google.com"),
+                    InlineKeyboardButton("Developer 🧑‍💻", url="https://t.me/SorceryBhai"),
                 ],
                 [
                     InlineKeyboardButton("Close ❌", callback_data="close"),
                     InlineKeyboardButton(
-                        "Source Code 📝", url="https://github.com/artemiszuk/upload_Z"
-                    ),
+                        "Source Code 📝", callback_data="source"),
                 ],
             ]
         ),
@@ -57,7 +56,7 @@ async def button(client, cmd: CallbackQuery):
                         InlineKeyboardButton("Close ❌", callback_data="close"),
                         InlineKeyboardButton(
                             "Source Code 📝",
-                            url="https://github.com/artemiszuk/upload_Z",
+                            callback_data="source"
                         ),
                     ],
                 ]
@@ -78,6 +77,13 @@ async def button(client, cmd: CallbackQuery):
         await cmd.message.delete()
     elif "cancel" in cb_data:
         Var.cancel[cmd.from_user.id] = True
+    elif "source" in cb_data:
+        await client.answer_callback_query(
+                callback_query_id=cmd.id,
+                text="Ask @SorceryBhai Unkil 🤔🤔",
+                show_alert=True,
+                cache_time=0,
+            )
     elif "toggle" in cb_data:
         if not (cmd.message.chat.type == "private"):
           current_user_id = cmd.message.reply_to_message.from_user.id
