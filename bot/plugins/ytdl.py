@@ -31,8 +31,9 @@ async def ytdl(client, message):
 
 
     format = msglist[1]
-    if format in ("mp3","m4a"):
-      youtube_dl_format = 'bestaudio[ext=m4a]'
+    youtube_dl_url = msglist[-1]
+    if format in ("mp3","m4a","wav","flac"):
+      youtube_dl_format = f"bestaudio[ext={format}]"
     else:
       youtube_dl_format = f"bestvideo[height<={format}]+bestaudio/best[height<={format}]"
     youtube_dl_url = msglist[-1]
@@ -99,13 +100,13 @@ async def ytdl(client, message):
                 )
         await asyncio.sleep(5)
     except Exception as e:
-      await bot_msg.edit(str(e))
+      await bot_msg.edit(f"**ERROR** : {str(e)}\n\n**Maybe Requested Quality not available.**")
     else:
-      filelist = os.listdir(ytdl_path)
+      filelist = sorted(os.listdir(ytdl_path))
       print(filelist)
-      filepath = f"{ytdl_path}/{filelist[-1]}"
-      thumbpath = f"{ytdl_path}/{filelist[0]}"
-      await bot_msg.edit(f"__Uploading {filelist[-1]}📤__...")
+      filepath = f"{ytdl_path}/{filelist[0]}"
+      thumbpath = f"{ytdl_path}/{filelist[-1]}"
+      await bot_msg.edit(f"__Uploading {filelist[0]}📤__...")
 
       #cmd = f"ffmpeg -i '{thumbpath}' '{ytdl_path}/thumb.jpg'"
       p = subprocess.Popen(["ffmpeg", "-i",thumbpath,f"{ytdl_path}/thumb.jpg"])
@@ -118,7 +119,7 @@ async def ytdl(client, message):
                 filepath,
                 thumb=f"{ytdl_path}/thumb.jpg",
                 duration = round(float(probe["format"]["duration"])),
-                caption=filelist[-1],
+                caption=filelist[0],
                 progress=progress_for_pyrogram,
                 progress_args=("Upload Status: \n", bot_msg, c_time, message.from_user.id, client),
             )
@@ -127,7 +128,7 @@ async def ytdl(client, message):
         await message.reply_video(
                 filepath,
                 supports_streaming=True,
-                caption=filelist[-1],
+                caption=filelist[0],
                 thumb=f"{ytdl_path}/thumb.jpg",
                 duration=int(float(mydict["duration"])),
                 width=int(mydict["width"]),

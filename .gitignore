@@ -6,4 +6,5 @@ download/
 bot/downloads
 test.py
 log.txt
+ytdl/
 bot/SUploadBot.session
