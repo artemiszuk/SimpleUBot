@@ -64,30 +64,32 @@ async def button(client, cmd: CallbackQuery):
             ),
         )
     elif "close" in cb_data:
-        current_user_id = cmd.message.reply_to_message.from_user.id
-        current_touched_user_id = cmd.from_user.id
-        if current_user_id != current_touched_user_id:
-          await client.answer_callback_query(
-              callback_query_id=cmd.id,
-              text="not your msg 🤔🤔",
-              show_alert=True,
-              cache_time=0,
-          )
-          return
+        if not (cmd.message.chat.type == "private"):
+          current_user_id = cmd.message.reply_to_message.from_user.id
+          current_touched_user_id = cmd.from_user.id
+          if current_user_id != current_touched_user_id:
+            await client.answer_callback_query(
+                callback_query_id=cmd.id,
+                text="not your msg 🤔🤔",
+                show_alert=True,
+                cache_time=0,
+            )
+            return
         await cmd.message.delete()
     elif "cancel" in cb_data:
         Var.cancel[cmd.from_user.id] = True
     elif "toggle" in cb_data:
-        current_user_id = cmd.message.reply_to_message.from_user.id
-        current_touched_user_id = cmd.from_user.id
-        if current_user_id != current_touched_user_id:
-          await client.answer_callback_query(
-              callback_query_id=cmd.id,
-              text="not your msg 🤔🤔",
-              show_alert=True,
-              cache_time=0,
-          )
-          return
+        if not (cmd.message.chat.type == "private"):
+          current_user_id = cmd.message.reply_to_message.from_user.id
+          current_touched_user_id = cmd.from_user.id
+          if current_user_id != current_touched_user_id:
+            await client.answer_callback_query(
+                callback_query_id=cmd.id,
+                text="not your msg 🤔🤔",
+                show_alert=True,
+                cache_time=0,
+            )
+            return
         user_id = cmd.from_user.id
         print(user_id)
         Var.upload_as_doc[user_id] = not Var.upload_as_doc[user_id]

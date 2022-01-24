@@ -41,7 +41,7 @@ async def upload(client, message, filepath, user_id, reply_to):
             media_msg = await reply_to.reply_video(
                 filepath,
                 supports_streaming=True,
-                caption=filename,
+                caption=os.path.splitext(filename)[0],
                 thumb=str(Var.tdict[user_id]),
                 duration=int(float(mydict["duration"])),
                 width=int(mydict["width"]),
@@ -53,7 +53,7 @@ async def upload(client, message, filepath, user_id, reply_to):
             print("Uploading as Document")
             media_msg = await reply_to.reply_document(
                 filepath,
-                caption=filename,
+                caption=os.path.splitext(filename)[0],
                 thumb=str(Var.tdict[user_id]),
                 progress=progress_for_pyrogram,
                 progress_args=("Upload Status: \n", message, c_time, user_id, client),
@@ -65,7 +65,7 @@ async def upload(client, message, filepath, user_id, reply_to):
             media_msg = await reply_to.reply_video(
                 filepath,
                 supports_streaming=True,
-                caption=filename,
+                caption=os.path.splitext(filename)[0],
                 thumb=mydict["tname"],
                 duration=int(float(mydict["duration"])),
                 width=int(mydict["width"]),
@@ -80,7 +80,7 @@ async def upload(client, message, filepath, user_id, reply_to):
             mydict = await get_details(filepath)
             media_msg = await reply_to.reply_document(
                 filepath,
-                caption=filename,
+                caption=os.path.splitext(filename)[0],
                 thumb=mydict["tname"],
                 progress=progress_for_pyrogram,
                 progress_args=("Upload Status: \n", message, c_time, user_id, client),
@@ -90,7 +90,7 @@ async def upload(client, message, filepath, user_id, reply_to):
             print("Uploading as Docuemnt")
             media_msg = await reply_to.reply_document(
                 filepath,
-                caption=filename,
+                caption=os.path.splitext(filename)[0],
                 progress=progress_for_pyrogram,
                 progress_args=("Upload Status: \n", message, c_time, user_id, client),
             )
@@ -100,5 +100,5 @@ async def upload(client, message, filepath, user_id, reply_to):
     mediaid_string = str(media_msg.message_id)
     link = f"https://t.me/c/{chatid_string[4:]}/{mediaid_string}"
     if user_id in Var.return_msg: 
-      Var.return_msg[user_id] += f"⚈ [{filename}]({link})" + "\n\n"
+      Var.return_msg[user_id] += f"⚈ [{os.path.splitext(filename)[0]}]({link})" + "\n\n"
     await message.delete()

@@ -119,7 +119,7 @@ async def ytdl(client, message):
                 filepath,
                 thumb=f"{ytdl_path}/thumb.jpg",
                 duration = round(float(probe["format"]["duration"])),
-                caption=filelist[0],
+                caption=os.path.splitext(filelist[0])[0],
                 progress=progress_for_pyrogram,
                 progress_args=("Upload Status: \n", bot_msg, c_time, message.from_user.id, client),
             )
@@ -128,7 +128,7 @@ async def ytdl(client, message):
         await message.reply_video(
                 filepath,
                 supports_streaming=True,
-                caption=filelist[0],
+                caption=os.path.splitext(filelist[0])[0],
                 thumb=f"{ytdl_path}/thumb.jpg",
                 duration=int(float(mydict["duration"])),
                 width=int(mydict["width"]),
