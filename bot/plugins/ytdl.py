@@ -104,11 +104,14 @@ async def ytdl(client, message):
     else:
       filelist = sorted(os.listdir(ytdl_path))
       print(filelist)
-      filepath = f"{ytdl_path}/{filelist[0]}"
-      thumbpath = f"{ytdl_path}/{filelist[-1]}"
-      await bot_msg.edit(f"__Uploading {filelist[0]}📤__...")
 
-      #cmd = f"ffmpeg -i '{thumbpath}' '{ytdl_path}/thumb.jpg'"
+      for file in filelist:
+        if os.path.splitext(file)[1] in (".jpg",".webp",".jpeg"): 
+          thumbpath = os.path.join(ytdl_path,file)
+        elif os.path.splitext(file)[1] in (".webm",".mp4"):
+          filepath = os.path.join(ytdl_path,file)
+
+      await bot_msg.edit(f"__Uploading {os.path.basename(filepath)}📤__...")
       p = subprocess.Popen(["ffmpeg", "-i",thumbpath,f"{ytdl_path}/thumb.jpg"])
       p.wait()
       #os.system(cmd)
@@ -138,6 +141,6 @@ async def ytdl(client, message):
             )
         os.remove(mydict["tname"])
       await bot_msg.delete()
-      shutil.rmtree(ytdl_path)
+      shutil.rmtree()
 
       
