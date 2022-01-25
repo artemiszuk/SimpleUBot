@@ -108,7 +108,7 @@ async def ytdl(client, message):
       for file in filelist:
         if os.path.splitext(file)[1] in (".jpg",".webp",".jpeg"): 
           thumbpath = os.path.join(ytdl_path,file)
-        elif os.path.splitext(file)[1] in (".webm",".mp4"):
+        elif os.path.splitext(file)[1] in (".webm",".mp4",".mp3",".m4a",".opus",".flac"):
           filepath = os.path.join(ytdl_path,file)
 
       await bot_msg.edit(f"__Uploading {os.path.basename(filepath)}📤__...")
@@ -141,6 +141,6 @@ async def ytdl(client, message):
             )
         os.remove(mydict["tname"])
       await bot_msg.delete()
-      shutil.rmtree()
+      shutil.rmtree(ytdl_path)
 
       
