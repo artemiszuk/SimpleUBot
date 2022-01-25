@@ -43,8 +43,8 @@ async def geturl(url):
 async def dl_link(client, message):
     user_id = message.from_user.id
     # if user_id not exists then store cancel flag
-    if user_id not in Var.cancel or Var.cancel[user_id]:
-        Var.cancel[user_id] = False
+    #if user_id not in Var.cancel or Var.cancel[user_id]:
+    Var.cancel[user_id] = False
       # seperate link from message
     text = f"__Checking Redirects__..."
     bot_msg = await message.reply(
@@ -63,14 +63,14 @@ async def dl_link(client, message):
             file_name = os.path.basename(url)
             while not downloader.isFinished():
                 total_length = downloader.filesize if downloader.filesize else 0
-                if Var.cancel[user_id] or total_length > 2097152000:
+                if Var.cancel[user_id] or (total_length > 2097152000 and os.path.splitext(file_name)[1] not in (".zip",".rar")):
                     downloader.stop()
-                    if total_length > 2097152000:
+                    if Var.cancel[user_id]:
+                        append = ""
+                    else:
                         append = (
                             f"\nFile Size: {humanbytes(total_length)}\nLimit : 2 GB"
                         )
-                    else:
-                        append = ""
                     await bot_msg.edit(f"Download Cancelled ‼{append}")
                     shutil.rmtree(f"download/{user_id}/")
                     Var.cancel[user_id] = False
