@@ -106,6 +106,7 @@ async def dl_link(client, message):
                 pass
             f = os.listdir(path)
             filepath = f"{path}/{f[0]}"
+            await bot_msg.edit("File Downloaded")
             return filepath, bot_msg
         except Exception as e:
             e_text = str(e)

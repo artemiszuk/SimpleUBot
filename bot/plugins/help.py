@@ -77,6 +77,9 @@ async def button(client, cmd: CallbackQuery):
         await cmd.message.delete()
     elif "cancel" in cb_data:
         Var.cancel[cmd.from_user.id] = True
+    elif "processend" in cb_data:
+        print("Changing Values")
+        Var.proc_cancel = True
     elif "source" in cb_data:
         await client.answer_callback_query(
                 callback_query_id=cmd.id,

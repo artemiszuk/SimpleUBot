@@ -26,3 +26,4 @@ class Var(object):
     q_link = dict()
     cancel = dict()
     return_msg = dict()
+    proc_cancel = False
