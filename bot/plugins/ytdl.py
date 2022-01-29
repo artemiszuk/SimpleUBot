@@ -113,7 +113,7 @@ async def ytdl(client, message):
       for file in filelist:
         if os.path.splitext(file)[1] in (".jpg",".webp",".jpeg"): 
           thumbpath = os.path.join(ytdl_path,file)
-        elif os.path.splitext(file)[1] in (".webm",".mp4",".mp3",".m4a",".opus",".flac"):
+        elif os.path.splitext(file)[1] in (".webm",".mp4",".mp3",".m4a",".opus",".flac",".mkv"):
           filepath = os.path.join(ytdl_path,file)
 
       await bot_msg.edit(f"__Uploading {os.path.basename(filepath)}📤__...")
