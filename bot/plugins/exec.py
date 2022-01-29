@@ -3,7 +3,7 @@ from pathlib import Path
 import shutil
 import asyncio
 import os
-from __main__ import app
+from __main__ import app,user
 from io import StringIO
 from contextlib import redirect_stdout
 import traceback
@@ -15,7 +15,7 @@ from pyrogram.types import (
     CallbackQuery,
 )
 
-@Client.on_message(filters.command(["shell"]) & CustomFilters.owner)
+@Client.on_message(filters.command(["shell"]) & CustomFilters.owner & filters.incoming)
 async def shell_cmd(client, message):
     msglist = message.text.split()
     if len(msglist) == 1:
@@ -36,7 +36,11 @@ async def shell_cmd(client, message):
     except Exception as e:
         await message.reply(str(e))
 
-@Client.on_message(filters.command(["exec"]) & CustomFilters.owner)
+@user.on_message(filters.command(["exec"],["."]) & filters.outgoing)
+def exec_cmd_user(client, message):
+  exec_cmd(client, message)
+
+@Client.on_message(filters.command(["exec"]) & CustomFilters.owner & filters.incoming)
 def exec_cmd(client, message):
   msglist = message.text.split()
   if len(msglist) == 1:

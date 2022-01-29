@@ -9,7 +9,7 @@ from pyrogram.types import (
     CallbackQuery,
 )
 
-@Client.on_message(filters.command(["thumb"]) & CustomFilters.auth_users)
+@Client.on_message(filters.command(["thumb"]) & CustomFilters.auth_users & filters.incoming)
 async def thumb(client, message):
     photo_msg = message.reply_to_message
     if photo_msg is not None and photo_msg.photo is not None:
@@ -23,7 +23,7 @@ async def thumb(client, message):
         await message.reply_text(f"Not a Photo", quote=True)
 
 
-@Client.on_message(filters.command(["clrthumb"]) & CustomFilters.auth_users)
+@Client.on_message(filters.command(["clrthumb"]) & CustomFilters.auth_users & filters.incoming)
 async def clrthumb(client, message):
     user_id = message.from_user.id
     if user_id in Var.tdict:
@@ -33,7 +33,7 @@ async def clrthumb(client, message):
     else:
         await message.reply_text("No Custom Thumbnail Found")
 
-@Client.on_message(filters.command(["toggle"]) & CustomFilters.auth_users)
+@Client.on_message(filters.command(["toggle"]) & CustomFilters.auth_users & filters.incoming)
 async def toggle(client, message):
     user_id = message.from_user.id
     if user_id not in Var.upload_as_doc:

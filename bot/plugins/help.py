@@ -7,7 +7,8 @@ from pyrogram.types import (
     CallbackQuery,
 )
 
-@Client.on_message(filters.command(["start"]) & CustomFilters.auth_users)
+
+@Client.on_message(filters.command(["start"]) & CustomFilters.auth_users& filters.incoming)
 async def start(client, message):
     await message.reply(
         Messages.START_MSG,
@@ -27,7 +28,7 @@ async def start(client, message):
     )  # sends above messsage
 
 
-@Client.on_message(filters.command(["help"]) & CustomFilters.auth_users)
+@Client.on_message(filters.command(["help"]) & CustomFilters.auth_users & filters.incoming)
 async def help(client, message):
     await start(client, message)
 

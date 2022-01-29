@@ -16,7 +16,11 @@ from bot.helpers.progress import humanbytes, progress_for_pyrogram
 from bot.helpers.uploadtools import upload
 from bot.config import Var, CustomFilters
 
-@Client.on_message(filters.command(["ytdl"]) & CustomFilters.auth_users)
+@Client.on_message(filters.command(["ytdl"],["."]) & CustomFilters.auth_users & filters.outgoing)
+async def ytdl_user(client, message):
+  await ytdl(client, message)
+
+@Client.on_message(filters.command(["ytdl"]) & CustomFilters.auth_users & filters.incoming)
 async def ytdl(client, message):
     c_time = time.time()
     msglist = message.text.split()

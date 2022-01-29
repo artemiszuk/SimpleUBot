@@ -15,7 +15,7 @@ from pyrogram.types import (
 
 
 
-@Client.on_message(filters.command(["upload"]) & CustomFilters.auth_users)
+@Client.on_message(filters.command(["upload"]) & CustomFilters.auth_users & filters.incoming)
 async def link(client, message, unzipflag=False):
     user_id = message.from_user.id
     if user_id not in Var.q_link:
@@ -53,7 +53,7 @@ async def link(client, message, unzipflag=False):
         print("Download Task is Done ,size of Queue = ", len(Var.q_link[user_id]))
 
 
-@Client.on_message(filters.command(["unzip"]) & CustomFilters.auth_users)
+@Client.on_message(filters.command(["unzip"]) & CustomFilters.auth_users & filters.incoming)
 async def unzip_cmd(client, message):
     archives = [".zip", ".rar"]
     if extension(message.text) not in archives:

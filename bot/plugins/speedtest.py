@@ -4,7 +4,7 @@ import wget
 from pyrogram import Client, filters
 from bot.config import CustomFilters
 
-@Client.on_message(filters.command(["speedtest"]) & CustomFilters.auth_users)
+@Client.on_message(filters.command(["speedtest"]) & CustomFilters.auth_users & filters.incoming)
 async def speedtst(client, message):
     bot_msg = await message.reply(f"__Performing Speedtest__ ...")
     try:

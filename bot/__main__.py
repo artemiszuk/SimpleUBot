@@ -1,6 +1,6 @@
 import os
 import logging
-from pyrogram import Client
+from pyrogram import Client,idle
 from bot import (
   API_ID,
   API_HASH,
@@ -29,7 +29,18 @@ if __name__ == "__main__":
         api_hash=API_HASH,
         plugins=plugins
     )
+    SESSION_STRING = os.environ.get("SESSION_STRING")
     print(os.getcwd())
+    user = Client(
+        SESSION_STRING,
+        api_id=API_ID,
+        api_hash=API_HASH,
+        plugins=plugins
+    )
+    app.start()
+    user.start()
     LOGGER.info('Starting Bot !')
-    app.run()
+    idle()
+    app.stop()
+    user.stop()
     LOGGER.info('Bot Stopped !')
