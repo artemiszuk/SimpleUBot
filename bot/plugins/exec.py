@@ -3,7 +3,7 @@ from pathlib import Path
 import shutil
 import asyncio
 import os
-from __main__ import app,user
+from __main__ import user
 from io import StringIO
 from contextlib import redirect_stdout
 import traceback

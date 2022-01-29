@@ -34,8 +34,7 @@ if __name__ == "__main__":
     user = Client(
         SESSION_STRING,
         api_id=API_ID,
-        api_hash=API_HASH,
-        plugins=plugins
+        api_hash=API_HASH
     )
     app.start()
     user.start()

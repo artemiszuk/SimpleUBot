@@ -2,6 +2,7 @@ import os
 import shutil
 import time
 import ffmpeg
+from __main__ import user
 from pyrogram import Client, filters
 from pyrogram.types import (
     ReplyKeyboardMarkup,
@@ -16,7 +17,7 @@ from bot.helpers.progress import humanbytes, progress_for_pyrogram
 from bot.helpers.uploadtools import upload
 from bot.config import Var, CustomFilters
 
-@Client.on_message(filters.command(["ytdl"],["."]) & CustomFilters.auth_users & filters.outgoing)
+@user.on_message(filters.command(["ytdl"],["."]) & CustomFilters.auth_users & filters.outgoing)
 async def ytdl_user(client, message):
   await ytdl(client, message)
 
