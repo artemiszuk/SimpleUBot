@@ -37,28 +37,35 @@ async def shell_cmd(client, message):
         await message.reply(str(e))
 
 @user.on_message(filters.command(["exec"],["."]) & filters.outgoing)
-def exec_cmd_user(client, message):
-  exec_cmd(client, message)
+async def exec_cmd_user(client, message):
+  await exec_cmd(client, message)
 
 @Client.on_message(filters.command(["exec"]) & CustomFilters.owner & filters.incoming)
-def exec_cmd(client, message):
+async def exec_cmd(client, message):
   msglist = message.text.split()
   if len(msglist) == 1:
-    message.reply("No Python Command Found")
+    await message.reply("No Python Command Found")
     return
   try:
     command_to_exec = message.text[6:]
     print(command_to_exec)
-    f = StringIO()  
+    f = StringIO() 
     with redirect_stdout(f):
-      help(command_to_exec)
+      await aexec(command_to_exec)
     s = f.getvalue()
     print(s)
-    message.reply(s)
+    await message.reply(s)
   except errors.MessageEmpty:
-    message.reply("`None`")
+    await message.reply("`None`")
   except Exception :
-    message.reply(traceback.format_exc())
+    await message.reply(traceback.format_exc())
 
 def help(code):
   exec(code)
+
+async def aexec(code):
+    exec(
+        'async def __aexec(): ' +
+        ''.join(f'\n {l_}' for l_ in code.split('\n'))
+    )
+    return await locals()['__aexec']()
