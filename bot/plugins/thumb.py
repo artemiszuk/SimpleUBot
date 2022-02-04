@@ -1,5 +1,6 @@
 import os
 import shutil
+from __main__ import user
 from pyrogram import Client, filters
 from bot.config import CustomFilters, Messages, Var
 from pyrogram.types import (
@@ -8,6 +9,14 @@ from pyrogram.types import (
     InlineKeyboardButton,
     CallbackQuery,
 )
+
+@user.on_message(filters.command(["thumb"],["."]) & filters.outgoing)
+async def user_thumb(client,message):
+  await thumb(client, message)
+
+@user.on_message(filters.command(["clrthumb"],["."]) & filters.outgoing)
+async def user_clrthumb(client, message):
+  await clrthumb(client, message)
 
 @Client.on_message(filters.command(["thumb"]) & CustomFilters.auth_users & filters.incoming)
 async def thumb(client, message):

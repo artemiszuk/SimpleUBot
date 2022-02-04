@@ -112,5 +112,5 @@ async def dl_link(client, message):
             e_text = str(e)
             shutil.rmtree(f"download/{user_id}/")
             print(e_text)
-            await bot_msg.edit_text("Some Error Occcured,Can't Download ")
+            await bot_msg.edit_text("Some Error Occcured,Can't Download\nPlease Check the URL you entered  ‼")
             return "",bot_msg

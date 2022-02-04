@@ -2,7 +2,7 @@ import os
 import shutil
 from pyrogram import Client, filters
 from bot.helpers.utils import extension
-
+from __main__ import user
 from bot.config import CustomFilters, Messages, Var, messageobj
 from bot.helpers.uploadtools import upload
 from bot.helpers.downloadtools import dl_link, unzip_and_upload
@@ -13,7 +13,13 @@ from pyrogram.types import (
     CallbackQuery,
 )
 
+@user.on_message(filters.command(["upload"],["."]) & filters.outgoing)
+async def user_link(client, message, unzipflag=False):
+  await link(client, message, unzipflag)
 
+@user.on_message(filters.command(["unzip"],["."]) & filters.outgoing)
+async def user_unzip(client, message):
+  await unzip_cmd(client, message)
 
 @Client.on_message(filters.command(["upload"]) & CustomFilters.auth_users & filters.incoming)
 async def link(client, message, unzipflag=False):
@@ -43,10 +49,10 @@ async def link(client, message, unzipflag=False):
         if len(filepath) != 0:
             if obj.unzip:
                 await unzip_and_upload(client,bot_msg, filepath, user_id,message)
-                if(message.from_user.id != message.chat.id): await message.reply(Var.return_msg[user_id])
+                if(not filters.private): await message.reply(Var.return_msg[user_id])
             else:
                 await upload(client,bot_msg, filepath, obj.message.from_user.id,message)
-                if(message.from_user.id != message.chat.id): await message.reply(Var.return_msg[user_id])
+                if(not filters.private): await message.reply(Var.return_msg[user_id])
             shutil.rmtree(f"download/{obj.message.from_user.id}/")
         Var.return_msg.pop(user_id)
         Var.q_link[user_id].pop(0)
