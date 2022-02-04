@@ -14,7 +14,7 @@ async def thumb(client, message):
     photo_msg = message.reply_to_message
     if photo_msg is not None and photo_msg.photo is not None:
         photo_dl_path = f"downloads/{message.from_user.id}.jpg"
-        await photo_msg.download(file_name=photo_dl_path)
+        await photo_msg.download(file_name=f"{message.from_user.id}.jpg")
         Var.tdict[message.from_user.id] = photo_dl_path
         await message.reply_text(
             f"Custom Thumb Saved", reply_to_message_id=photo_msg.message_id, quote=True
