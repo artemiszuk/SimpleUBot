@@ -93,7 +93,7 @@ async def dl_link(client, message):
                     + "%\n"
                     + f"**Speed **🚀: {speed}\n"
                     + f"**ETA **⏳: {eta_time}\n"
-                    + f"**Elapsed **: {str(datetime.timedelta(seconds = curr_time - start_time))}"
+                    + f"**Elapsed Time ⏰**: {str(datetime.timedelta(seconds = curr_time - start_time))}"
                 )
                 await bot_msg.edit(
                     progress_str,
