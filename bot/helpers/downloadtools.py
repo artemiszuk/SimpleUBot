@@ -1,4 +1,6 @@
 import os
+import time
+import datetime
 import shutil
 from pyrogram.types import (
     ReplyKeyboardMarkup,
@@ -30,7 +32,7 @@ async def unzip_and_upload(client,bot_msg, filepath, user_id,reply_to):
     else:
         await upload_folder(client,new_dir, bot_msg, user_id,reply_to)
 
-async def geturl(url):
+def geturl(url):
   newurl=""
   try:
     newurl = urlopen(url,timeout=3).geturl()
@@ -50,10 +52,11 @@ async def dl_link(client, message):
     bot_msg = await message.reply(
         text, disable_web_page_preview=True
     )  # displays user input
-    url = await geturl(message.text.split()[-1])
+    url = geturl(message.text.split()[-1])
     if not url : url = message.text.split()[-1]
     print(url)
     path = f"download/{user_id}/{message.message_id}"
+    start_time = int(time.time())
     if os.path.isdir(f"download/{user_id}") == False:
         try:
             await bot_msg.edit("File Downloading")
@@ -80,6 +83,7 @@ async def dl_link(client, message):
                 prg = progress(int(percentage), 100)
                 speed = downloader.get_speed(human=True)
                 eta_time = downloader.get_eta(human=True)
+                curr_time = int(time.time())
                 progress_str = (
                     f"**File Name** 📝: {unquote(file_name)} \n"
                     + f"**Progress** 📊: {prg}\n"
@@ -88,7 +92,8 @@ async def dl_link(client, message):
                     + str(int(percentage))
                     + "%\n"
                     + f"**Speed **🚀: {speed}\n"
-                    + f"**ETA **⏳: {eta_time}"
+                    + f"**ETA **⏳: {eta_time}\n"
+                    + f"**Elapsed **: {str(datetime.timedelta(seconds = curr_time - start_time))}"
                 )
                 await bot_msg.edit(
                     progress_str,
@@ -100,13 +105,6 @@ async def dl_link(client, message):
             await bot_msg.edit("File Downloaded")
             f = os.listdir(path)
             filepath = f"{path}/{f[0]}"
-            return filepath, bot_msg
-        except errors.MessageNotModified:
-            while not downloader.isFinished():
-                pass
-            f = os.listdir(path)
-            filepath = f"{path}/{f[0]}"
-            await bot_msg.edit("File Downloaded")
             return filepath, bot_msg
         except Exception as e:
             e_text = str(e)

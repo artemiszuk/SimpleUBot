@@ -1,3 +1,5 @@
+start.sh
+env/
 .replit
 __pycache__/
 account.session
