@@ -8,3 +8,4 @@ wget
 patool
 yt-dlp
 pyromod
+git+https://github.com/rmerzouki/pytube

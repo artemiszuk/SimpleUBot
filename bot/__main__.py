@@ -1,6 +1,6 @@
 import os
 import logging
-from pyromod import listen
+#from pyromod import listen
 
 from pyrogram import Client,idle
 from bot import (
