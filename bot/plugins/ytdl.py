@@ -50,14 +50,14 @@ def mypytubelist(client,message):
     Var.cancel[user_id] = False
     c_time = time.time()
     i = 0
+    start_t = var(int(time.time()))
     for url in p:
-        start_t = var(int(time.time()))
         ct = var(int(time.time()))
         ytdl_path = f"ytdl/{message.from_user.id}/{message.message_id}"
         
         def progress_func(stream,data_chunk,remaining):
             curr = int(time.time())
-            if curr - start_t.htime() >= 3:
+            if curr - start_t.htime() >= 5:
                 start_t._time = int(time.time())
                 downloaded = stream.filesize-remaining
                 percent = (downloaded/stream.filesize)*100
@@ -163,6 +163,7 @@ def mypytubelist(client,message):
                     client
                 )
             )
+        time.sleep(1)
         bot_msg.delete()
         time.sleep(3)
         chatid_string = str(message.chat.id)
