@@ -23,8 +23,8 @@ from bot.helpers.uploadtools import upload
 from bot.config import Var, CustomFilters
 
 @user.on_message(filters.command(["ytdl"],["."]) & CustomFilters.auth_users & filters.outgoing)
-async def ytdl_user(client, message):
-  await ytdl(client, message)
+def ytdl_user(client, message):
+    mypytube(client, message)
 
 class var:
     def __init__(self,_time):
@@ -33,7 +33,7 @@ class var:
         return self._time
 
 
-@Client.on_message(filters.command(["pytubelist"]) & CustomFilters.auth_users & filters.incoming)
+@Client.on_message(filters.command(["ytlist"]) & CustomFilters.auth_users & filters.incoming)
 def mypytubelist(client,message):
     user_id = message.from_user.id
     msglist = message.text.split()
@@ -63,7 +63,6 @@ def mypytubelist(client,message):
                 percent = (downloaded/stream.filesize)*100
                 #print(percent)
                 if Var.cancel[user_id]:
-                    print(stream)
                     raise Exception("Cancelled")
                     #stream = None
                     #return
@@ -76,13 +75,11 @@ def mypytubelist(client,message):
                     )
                 )
         def complete_func(stream,filepath):
-            print(filepath)
             base, ext = os.path.splitext(filepath)
             if quality == "audio": 
                 os.rename(filepath,base+".mp3")
                 filepath = base + ".mp3"
             filename = os.path.splitext(filepath)[0]
-            print(yt.thumbnail_url)
             wget.download(url = yt.thumbnail_url,out=f'{ytdl_path}/{os.path.basename(filename)}.jpg')
             #end of for
         yt = YouTube(
@@ -104,15 +101,12 @@ def mypytubelist(client,message):
         except Exception as e:
             print(e)
             if str(e) == "Cancelled":
-                print("here")
                 shutil.rmtree(ytdl_path)
-                return bot_msg.edit("Download Cancelled")
+                return message.reply("#cancel\n\nDownload Cancelled By User")
             else:
                 return bot_msg.edit(f"ERROR : {e}\n\n__Maybe Requested Video or Quality not available.__")
-    print("finished")
     bot_msg.edit(f"#ytplaylist\n\nPlayList Downloaded\nTotal Files :{count}")
     filelist = sorted(os.listdir(ytdl_path))
-    print(filelist)
     to_upload = []
     for file in filelist:
         if os.path.splitext(file)[1] in (
@@ -126,17 +120,16 @@ def mypytubelist(client,message):
         ):
             filepath = os.path.join(ytdl_path, file)
             to_upload.append(filepath)
-    print(to_upload)
     quality = msglist[1]
     return_msg = f"**🎴 UPLOADED MENU:** \n__Sender__ : {message.from_user.mention()}\n"
     for filepath in to_upload:
         if Var.cancel[user_id]:
             shutil.rmtree(ytdl_path)
+            message.reply("#cancel\n\nUpload Cancelled By User")
             return
         filename = os.path.basename(filepath)
         bot_msg = message.reply(f"__Uploading {filename}📤__...")
         jpg_thumb = os.path.splitext(filepath)[0] + ".jpg"
-        print(jpg_thumb)
         if quality == "audio":
             probe = ffmpeg.probe(filepath)
             media_msg = message.reply_audio(
@@ -183,7 +176,7 @@ def mypytubelist(client,message):
 
 
 
-@Client.on_message(filters.command(["pytube"]) & CustomFilters.auth_users & filters.incoming)
+@Client.on_message(filters.command(["ytdl"]) & CustomFilters.auth_users & filters.incoming)
 def mypytube(client,message):
     user_id = message.from_user.id
     msglist = message.text.split()
@@ -219,7 +212,6 @@ def mypytube(client,message):
     
     def complete_func(stream,filepath):
         return_msg = f"**🎴 UPLOADED MENU:** \n__Sender__ : {message.from_user.mention()}\n\n"
-        print(filepath)
         base, ext = os.path.splitext(filepath)
         if quality == "audio": 
             os.rename(filepath,base+".mp3")
@@ -227,7 +219,6 @@ def mypytube(client,message):
         bot_msg.edit("Downloaded")
         bot_msg.edit(f"__Uploading {os.path.basename(filepath)}📤__...")
         filename = os.path.splitext(filepath)[0]
-        print(yt.thumbnail_url)
         wget.download(url = yt.thumbnail_url,out=f'{ytdl_path}/{os.path.basename(filename)}.jpg')
         if not quality == "audio":
             media_msg = message.reply_video(
@@ -285,7 +276,6 @@ def mypytube(client,message):
     else:
         quality += "p"
         video = yt.streams.filter(resolution=quality).first()
-        print(video)
     try:
         
         video.download(ytdl_path)  
