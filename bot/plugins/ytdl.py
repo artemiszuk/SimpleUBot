@@ -57,7 +57,7 @@ def mypytubelist(client,message):
         
         def progress_func(stream,data_chunk,remaining):
             curr = int(time.time())
-            if curr - start_t.htime() >= 5:
+            if curr - start_t.htime() >= 3:
                 start_t._time = int(time.time())
                 downloaded = stream.filesize-remaining
                 percent = (downloaded/stream.filesize)*100
@@ -164,6 +164,7 @@ def mypytubelist(client,message):
                 )
             )
         bot_msg.delete()
+        time.sleep(3)
         chatid_string = str(message.chat.id)
         mediaid_string = str(media_msg.message_id)
         link = f"https://t.me/c/{chatid_string[4:]}/{mediaid_string}"
