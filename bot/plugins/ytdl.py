@@ -37,7 +37,6 @@ class var:
 def mypytubelist(client,message):
     user_id = message.from_user.id
     msglist = message.text.split()
-    bot_msg = message.reply("Trying to download..")
     if len(msglist) < 3:
         bot_msg.edit("YtdlPlaylist Takes 2 Parameters\n e.g./ytdl quality youtube_link")
         return
@@ -46,15 +45,16 @@ def mypytubelist(client,message):
     if count == 0:
         return message.reply("InValid Playlist URL")
     else:
-        bot_msg.edit(f"Found {len(p)} videos in playlist")
+        status = message.reply(f"Found {len(p)} videos in playlist")
     Var.cancel[user_id] = False
     c_time = time.time()
     i = 0
     start_t = var(int(time.time()))
+    time.sleep(2)
+    bot_msg = status.reply(f"Downloading Playlist... 📥")
     for url in p:
         ct = var(int(time.time()))
-        ytdl_path = f"ytdl/{message.from_user.id}/{message.message_id}"
-        
+        ytdl_path = f"ytlist/{message.from_user.id}/{message.message_id}"
         def progress_func(stream,data_chunk,remaining):
             curr = int(time.time())
             if curr - start_t.htime() >= 5:
@@ -105,7 +105,8 @@ def mypytubelist(client,message):
                 return message.reply("#cancel\n\nDownload Cancelled By User")
             else:
                 return bot_msg.edit(f"ERROR : {e}\n\n__Maybe Requested Video or Quality not available.__")
-    bot_msg.edit(f"#ytplaylist\n\nPlayList Downloaded\nTotal Files :{count}")
+    bot_msg.delete()
+    status.edit(f"#ytplaylist\n\nPlayList Downloaded\nTotal Files :{count}")
     filelist = sorted(os.listdir(ytdl_path))
     to_upload = []
     for file in filelist:
@@ -132,7 +133,7 @@ def mypytubelist(client,message):
         jpg_thumb = os.path.splitext(filepath)[0] + ".jpg"
         if quality == "audio":
             probe = ffmpeg.probe(filepath)
-            media_msg = message.reply_audio(
+            media_msg = status.reply_audio(
                 filepath,
                 thumb=jpg_thumb,
                 duration=round(float(probe["format"]["duration"])),
@@ -148,7 +149,7 @@ def mypytubelist(client,message):
             )
         else:
             probe = ffmpeg.probe(filepath)
-            media_msg = message.reply_video(
+            media_msg = status.reply_video(
                 filepath,
                 duration = round(float(probe["format"]["duration"])),
                 height = int(msglist[1]),
@@ -182,7 +183,7 @@ def mypytubelist(client,message):
 def mypytube(client,message):
     user_id = message.from_user.id
     msglist = message.text.split()
-    bot_msg = message.reply("Trying to download..")
+    bot_msg = message.reply("Trying to download 📥...")
     if len(msglist) < 3:
         bot_msg.edit("Ytdl Takes 2 Parameters\n e.g./ytdl quality youtube_link")
         return
