@@ -9,4 +9,5 @@ bot/downloads
 test.py
 log.txt
 ytdl/
+ytlist/
 bot/SUploadBot.session

@@ -1,5 +1,6 @@
 import os
 import shutil
+from pathlib import Path
 import time
 import wget
 import datetime
@@ -38,8 +39,7 @@ def mypytubelist(client,message):
     user_id = message.from_user.id
     msglist = message.text.split()
     if len(msglist) < 3:
-        bot_msg.edit("YtdlPlaylist Takes 2 Parameters\n e.g./ytdl quality youtube_link")
-        return
+        return message.reply("YtdlPlaylist Takes 2 Parameters\n e.g./ytdl quality youtube_link")
     p = Playlist(msglist[-1])
     count = len(p)
     if count == 0:
@@ -107,7 +107,10 @@ def mypytubelist(client,message):
                 return bot_msg.edit(f"ERROR : {e}\n\n__Maybe Requested Video or Quality not available.__")
     bot_msg.delete()
     status.edit(f"#ytplaylist\n\nPlayList Downloaded\nTotal Files :{count}")
-    filelist = sorted(os.listdir(ytdl_path))
+    filelist = []
+    paths = sorted(Path(ytdl_path).iterdir(), key=os.path.getmtime)
+    for file in paths:filelist.append(file.name)
+    print(filelist)
     to_upload = []
     for file in filelist:
         if os.path.splitext(file)[1] in (
